@@ -1,0 +1,4 @@
+{
+    "prisma-smart-formatter.typescriptreact.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.fontSize": 12
+}
