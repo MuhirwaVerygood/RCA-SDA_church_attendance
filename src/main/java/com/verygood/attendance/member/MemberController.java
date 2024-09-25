@@ -1,5 +1,6 @@
 package com.verygood.attendance.member;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -7,8 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/api/v1/members")
-@RequiredArgsConstructor
-public class MemberController {
+@Tag(name="Members" , description = "Apis for members management")
+@RequiredArgsConstructor public class MemberController {
     private  final MemberService service;
 
     @GetMapping

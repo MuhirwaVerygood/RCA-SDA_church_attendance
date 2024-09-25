@@ -1,5 +1,6 @@
 package com.verygood.attendance.auth;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.verygood.attendance.user.Role;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +48,7 @@ public class AuthenticationService {
     return ResponseEntity.ok("User registered successfully");
   }
 
-  public AuthenticationResponse authenticate(AuthenticationRequest request) {
+  public ResponseEntity<?> authenticate(AuthenticationRequest request) {
     authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(
             request.getEmail(),
@@ -60,11 +61,14 @@ public class AuthenticationService {
     var refreshToken = jwtService.generateRefreshToken(user);
     revokeAllUserTokens(user);
     saveUserToken(user, jwtToken);
-    return AuthenticationResponse.builder()
-            .message("User logged in successfully")
-        .accessToken(jwtToken)
-            .refreshToken(refreshToken)
-        .build();
+    return ResponseEntity.ok(
+            AuthenticationResponse.builder()
+                    .message("User logged in successfully")
+                    .accessToken(jwtToken)
+                    .role(Role.valueOf(user.getRole().name()))
+                    .refreshToken(refreshToken)
+                    .build()
+    );
   }
 
 

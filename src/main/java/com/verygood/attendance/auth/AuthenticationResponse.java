@@ -1,6 +1,7 @@
 package com.verygood.attendance.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.verygood.attendance.user.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,4 +18,6 @@ public class AuthenticationResponse {
   private String accessToken;
   @JsonProperty("refresh_token")
   private String refreshToken;
+  @JsonProperty
+  private Role role;
 }
