@@ -25,8 +25,7 @@ const Page = () => {
     gender: "",
   });
 
-  const [gender, setGender] = useState(""); 
-  const [familyId, setFamilyId] = useState<number | null>(null); 
+ 
 
   return (
     <div className="w-full flex flex-col pt-[2%] items-center">

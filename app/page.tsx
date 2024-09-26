@@ -1,4 +1,4 @@
-import { AuthProvider } from "@/app/contexts/AuthProvider";
+import { AuthProvider } from "@/app/contexts/FamilyContextProvider";
 import Login from "@/components/Login";
 import Signup from "@/components/Signup";
 

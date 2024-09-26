@@ -9,6 +9,7 @@ export interface MemberType{
  firstname: string;
  lastname: string;
  className: string;
+ gender: string;
  familyName: string;
  memberId: number
 }
@@ -18,7 +19,6 @@ const Homepage = () => {
   const [loading, setLoading] = useState<boolean>(false)
 
   const token = Cookies.get("token")
-  const role = Cookies.get("role")
 
   const fetchData = async ()=>{
     try {
