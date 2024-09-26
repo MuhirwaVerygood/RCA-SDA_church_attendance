@@ -45,7 +45,7 @@ const UsersList = ({userDatas}:{userDatas: MemberType[]}) => {
   <Button colorScheme='teal' variant={"solid"} onClick={handleAddNewUser} >Add New User</Button>
   </div> :""}
   <div className=' w-full  flex flex-col  items-center'>
-  <table className='lg:w-[40%]'>
+  <table className='lg:w-[50%]'>
     <thead>
       <th className=' border-[1px] ss:px-1 sm:px-2 md:px-3 lg:px-4 ss:py-1 md:py-2'>Id</th>
       <th className=' border-[1px] ss:px-1 sm:px-2 md:px-3 lg:px-4 ss:py-1 md:py-2'>Names</th>

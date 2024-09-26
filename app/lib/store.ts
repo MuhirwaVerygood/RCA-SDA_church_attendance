@@ -1,8 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
+import attendanceSlice from './AttendanceSlice';
 
 export const makeStore = () => {
   return configureStore({
-    reducer: {},
+    reducer: {
+        attendance: attendanceSlice
+    },
   })
 }
 
