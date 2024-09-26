@@ -17,7 +17,7 @@ public class Member {
     @SequenceGenerator(name = "member_seq", sequenceName = "member_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE,  generator = "member_seq")
     private Integer id;
-
+    private String gender;
     private String firstname;
     private String lastname;
     private String className;

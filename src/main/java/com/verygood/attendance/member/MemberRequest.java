@@ -5,7 +5,10 @@ import lombok.Data;
 @Data
 public class MemberRequest {
     private String firstname;
+    private String gender;
     private String lastname;
     private String className;
     private Integer familyId;
 }
+
+

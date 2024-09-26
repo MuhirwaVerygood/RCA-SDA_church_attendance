@@ -28,6 +28,7 @@ public class MemberService {
         }else{
             Member member= Member
                     .builder()
+                    .gender(request.getGender())
                     .firstname(request.getFirstname())
                     .lastname(request.getLastname())
                     .className(request.getClassName())
