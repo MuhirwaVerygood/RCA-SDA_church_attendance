@@ -11,11 +11,10 @@ import {
 } from "@chakra-ui/react";
 import { IoEyeOffOutline } from "react-icons/io5";
 import { IoEyeOutline } from "react-icons/io5";
-
+import Cookies from "js-cookie";
 import React, { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/app/contexts/AuthProvider";
 interface LoginSchema {
   email: string;
   password: string;
@@ -28,7 +27,6 @@ const Login = () => {
   const handleClick = () => setShow(!show);
   const toast = useToast();
   const router = useRouter();
-  const {setRole, setToken} = useAuth();
   const handleSubmit = async () => {
     try {
       setLoading(true);
@@ -45,9 +43,8 @@ const Login = () => {
           duration: 2000,
           position: "top-right",
         });
-
-        setToken(response.data.body.access_token)
-        setRole(response.data.body.role)
+        Cookies.set("token", response.data.body.access_token)
+        Cookies.set("role", response.data.body.role)
         setLoading(false);
         router.push("/users")
       }
