@@ -61,6 +61,10 @@ public class AttendanceService {
                attendance.setTotalArarwayeCount(attendance.getTotalArarwayeCount() + 1);
            }
 
+           if (request.isAfiteIndiMpamvu()) {
+            attendance.setTotalAfiteIndiMpamvu(attendance.getTotalAfiteIndiMpamvu() + 1);
+        }
+
            repository.save(attendance);
 
        }

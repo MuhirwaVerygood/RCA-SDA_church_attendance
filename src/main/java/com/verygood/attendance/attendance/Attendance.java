@@ -30,4 +30,6 @@ public class Attendance {
     private int totalYatangiyeIsabatoCount=0;
     private int totalYarasibyeCount=0;
     private int totalYize7Count=0;
+    private int totalAfiteIndiMpamvu=0;
+    private int abashyitsi;
 };

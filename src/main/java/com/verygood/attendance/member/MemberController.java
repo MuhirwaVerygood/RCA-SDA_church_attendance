@@ -22,4 +22,10 @@ import org.springframework.web.bind.annotation.*;
     public ResponseEntity<?>  addMember(@RequestBody MemberRequest  request){
         return service.addMember(request);
     }
+
+    @PreAuthorize("hasAuthority('admin:delete')")   
+    @DeleteMapping("/{member-id}")
+    public ResponseEntity<?> deleteMemberById(@PathVariable("member-id") Integer memberId){
+        return service.deleteMemberById(memberId);
+    }
 }
