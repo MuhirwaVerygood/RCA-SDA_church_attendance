@@ -26,9 +26,9 @@ const Homepage = () => {
       console.log("Bearer before", token);
       
       const response = await axios.get("http://localhost:3500/api/v1/members", {
-        headers: {
-          Authorization: `Bearer ${token}`, // Use template literals here
-        },
+        // headers: {
+        //   Authorization: `Bearer ${token}`, // Use template literals here
+        // },
         
       });      
       console.log(response);

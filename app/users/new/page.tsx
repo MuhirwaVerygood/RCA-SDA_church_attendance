@@ -1,12 +1,18 @@
 "use client";
 import {
+    Button,
   Input,
+  position,
   Radio,
   RadioGroup,
   Select,
   Stack,
+  useToast,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import Cookies from 'js-cookie'
+import { useRouter } from "next/navigation";
 
 interface MemberRequestType {
   firstname: string;
@@ -24,7 +30,56 @@ const Page = () => {
     familyId: 0,
     gender: "",
   });
+  const [token ,setToken]= useState<string | null>()
+  const toast = useToast()
+  useEffect(()=>{
+    setToken(Cookies.get('token'))
+  },[])
 
+  const router = useRouter()
+
+  const handleAddUser= async()=>{
+    console.log(user);
+   try {
+    
+    const response = await axios.post("http://localhost:3500/api/v1/members/new", user,{
+        headers:{
+            Authorization:`Bearer ${token}`
+        }
+    })
+    console.log(response);
+    if(response.status == 200){
+        toast({
+            title: response.data.message,
+            position:"top-right",
+            status:"success",
+            duration: 3000
+        })
+        router.push('/users')
+    }
+
+   
+   } catch (error:any) {
+    console.log(error);
+   if(error.status == 404){
+    toast({
+        title:"The family with that id does not exist",
+        position:"top-right",
+        duration:3000,
+        status:"error"
+    })
+   }else{
+    toast({
+        title:"Faced an issue when adding a member",
+        status:"error",
+        position:  "top-right",
+        duration: 2000
+    })
+   }  
+   }
+    
+    
+  }
  
 
   return (
@@ -84,6 +139,7 @@ const Page = () => {
             <Radio value="female">Female</Radio>
           </Stack>
         </RadioGroup>
+        <Button colorScheme="teal" mt={2} px={"40%"} onClick={handleAddUser}>Add user</Button>
       </form>
     </div>
   );

@@ -12,7 +12,9 @@ interface LinkSchema {
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isFamilyDropdownOpen, setIsFamilyDropdownOpen] = useState(false);
-  const {familyDropDownOpened, setFamilyDropDownOpened} = useFamily()
+  const { setFamilyDropDownOpened} = useFamily()
+
+ 
   const navigationLinks: LinkSchema[] = [
     {
       name: "Home",

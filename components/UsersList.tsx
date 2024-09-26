@@ -12,10 +12,16 @@ const UsersList = ({userDatas}:{userDatas: MemberType[]}) => {
   const router  = useRouter()
   const {familyDropDownOpened}  = useFamily()
 
+
+
   useEffect(()=>{
     setToken(Cookies.get("token"))
     setRole(Cookies.get("role"))
   },[])
+
+  const handleAddNewUser= ()=>{
+    router.push("/users/new")
+  }
 
   const handleDelete = async (id:number | undefined) => {
     const res = await axios.delete("https://attendance-pro.onrender.com/api/v1/members/deleteMember/" + id, {
@@ -36,7 +42,7 @@ const UsersList = ({userDatas}:{userDatas: MemberType[]}) => {
   }
   return token?  <div className='w-full flex flex-col '>
   {role ==="ADMIN" ?  <div className={`flex justify-end  ${familyDropDownOpened ? "mt-[8%]": "mt-[2%]"} mb-[2%] pr-[5%] `}>
-  <Button colorScheme='teal' variant={"solid"} >Add New User</Button>
+  <Button colorScheme='teal' variant={"solid"} onClick={handleAddNewUser} >Add New User</Button>
   </div> :""}
   <div className=' w-full  flex flex-col  items-center'>
   <table className='lg:w-[40%]'>
