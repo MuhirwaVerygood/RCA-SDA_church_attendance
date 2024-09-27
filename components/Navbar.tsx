@@ -43,8 +43,8 @@ const Navbar = () => {
   ];
 
   const familyOptions = [
-    { name: "Ebenezar", href: "/attendances/family/ebenezar" },
-    { name: "Salvation Siblings", href: "/attendances/family/salvation-siblings" },
+    { name: "Ebenezar", href: "/attendances/family/ebenezer" },
+    { name: "Salvation Siblings", href: "/attendances/family/salvation_siblings" },
     { name: "Family Exaucee", href: "/attendances/family/exaucee" },
   ];
 
