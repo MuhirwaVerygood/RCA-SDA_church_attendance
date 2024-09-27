@@ -1,4 +1,3 @@
-import { AuthProvider } from "@/app/contexts/FamilyContextProvider";
 import Login from "@/components/Login";
 import Signup from "@/components/Signup";
 
@@ -13,3 +12,4 @@ export default function Home() {
    </div>
   );
 }
+  

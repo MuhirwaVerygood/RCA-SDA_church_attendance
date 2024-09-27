@@ -24,6 +24,8 @@ const Homepage = () => {
   const dispatch = useAppDispatch();
   const attendancies = useAppSelector((state: RootState)=>state.attendance.attendances)
   const fetchData = async () => {
+    console.log(attendancies);
+    
     try {
       setLoading(true);
       console.log("Bearer before", token);
@@ -35,22 +37,9 @@ const Homepage = () => {
       });
 
       setUserDatas(response.data);
+    console.log(userDatas)
+      
 
-      const attendanceRequests: AttendanceRequest[] = response.data.map((data: MemberType) => ({
-        memberId: data.memberId,
-        firstname: data.firstname,
-        lastname: data.lastname,
-        yaje: false,
-        yarasuye: false,
-        yarasuwe: false,
-        yarafashije: false,
-        yarafashijwe: false,
-        yatangiyeIsabato: false,
-        yize7: false,
-        ararwaye: false,
-      }))
-
-      attendanceRequests.forEach(attendance => dispatch(addAttendanceSync(attendance)));
     } catch (error: any) {
       if (axios.isAxiosError(error)) {
         console.error('Error response:', error.response);
@@ -69,7 +58,24 @@ const Homepage = () => {
   useEffect(()=>{
     console.log(attendancies);    
   },[])
+  
+  const attendanceRequests: AttendanceRequest[] = userDatas.map((data: MemberType) => ({
+    memberId: data.memberId,
+    firstname: data.firstname,
+    lastname: data.lastname,
+    yaje: false,
+    yarasuye: false,
+    yarasuwe: false,
+    yarafashije: false,
+    yarafashijwe: false,
+    yatangiyeIsabato: false,
+    yize7: false,
+    ararwaye: false,
+    afiteIndiMpamvu:false
+  }))
 
+  attendanceRequests.forEach(attendance => dispatch(addAttendanceSync(attendance)));
+  console.log(attendanceRequests)
   return (
     <div>
       <Navbar />

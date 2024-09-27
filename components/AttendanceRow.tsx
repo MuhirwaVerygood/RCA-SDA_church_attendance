@@ -11,7 +11,7 @@ const AttendanceRow = ({ user, dispatch, id }: {
    
   const username = `${user.firstname} ${user.lastname}`;  
   
-  const [attendanceData, setAttendanceData] = useState({
+  const [attendanceData, setAttendanceData] = useState<AttendanceRequest>({
     memberId: user.memberId,
     firstname: user.firstname,
     lastname: user.lastname,
@@ -27,13 +27,16 @@ const AttendanceRow = ({ user, dispatch, id }: {
   });
 
   const handleUpdate = (key: keyof typeof attendanceData, value: boolean) => {
-    const updatedData = { ...attendanceData, [key]: value };
-    setAttendanceData(updatedData);
-    dispatch(updateAttendanceSync(updatedData));
+    setAttendanceData(prevData => {
+      const updatedData = { ...prevData, [key]: value };
+      dispatch(updateAttendanceSync(updatedData));
+      return updatedData; 
+    });
   };
+  
 
   return (
-    <tr key={id} className="border-b border-gray-200">
+    <tr key={user.memberId} className="border-b border-gray-200">
       <td className="border p-2 text-center">{id}</td>
       <td className="border p-2">{username}</td>
       <td 
@@ -43,6 +46,10 @@ const AttendanceRow = ({ user, dispatch, id }: {
         <div className="flex justify-center">
           <Checkbox
             isChecked={attendanceData.yaje}
+            onChange={(e)=> {
+              e.stopPropagation()
+              handleUpdate("yaje", !attendanceData.yaje)
+            }}
             colorScheme="green"
             className="cursor-pointer"
           />
@@ -60,9 +67,10 @@ const AttendanceRow = ({ user, dispatch, id }: {
           />
         </div>
       </td>
+     
       <td 
-        className="border p-2 text-center cursor-pointer"
-        onClick={() => handleUpdate("ararwaye", !attendanceData.afiteIndiMpamvu)}
+        className="border p-2  text-center cursor-pointer"
+        onClick={() => handleUpdate("afiteIndiMpamvu", !attendanceData.afiteIndiMpamvu)}
       >
         <div className="flex justify-center">
           <Checkbox

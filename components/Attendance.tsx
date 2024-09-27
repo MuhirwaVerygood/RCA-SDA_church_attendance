@@ -62,6 +62,7 @@ const Attendance = () => {
           yatangiyeIsabato: false,
           yize7: false,
           ararwaye: false,
+          afiteIndiMpamvu:false
         }));
   
         newAttendance.forEach((d) => {
@@ -125,6 +126,7 @@ const Attendance = () => {
               {allAttendance.map((user) => {
                 return (
                   <AttendanceRow
+                  key={user.memberId}
                     user={user}
                     id={user.memberId}
                     dispatch={dispatch}

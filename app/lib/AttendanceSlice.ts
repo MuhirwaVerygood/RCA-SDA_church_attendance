@@ -13,7 +13,7 @@ export interface AttendanceRequest {
   yatangiyeIsabato: boolean;
   yize7: boolean;
   ararwaye: boolean;
-  afiteIndiMpamvu?: boolean;
+  afiteIndiMpamvu: boolean
 }
 
 export interface AttendanceState {
@@ -58,7 +58,7 @@ const attendanceSlice = createSlice({
   reducers: {
     addAttendanceSync(state, action: PayloadAction<AttendanceRequest>) {
       const { memberId } = action.payload;
-      console.log(action.payload);
+      console.log(action.payload)
       
       const recordExists = state.attendances.some((data) => data.memberId === memberId);
       if (!recordExists) {
