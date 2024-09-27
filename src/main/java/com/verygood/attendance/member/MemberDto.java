@@ -8,6 +8,7 @@ public class MemberDto {
     private String firstname;
     private String lastname;
     private String className;
+    private Integer familyId;
     private String familyName;
     private String gender;
 
@@ -15,6 +16,7 @@ public class MemberDto {
         this.memberId= member.getId();
         this.familyName= member.getFamily().getName();
         this.gender= member.getGender();
+        this.familyId= member.getFamily().getId();
         this.firstname= member.getFirstname();
         this.lastname = member.getLastname();
         this.className  = member.getClassName();

@@ -3,7 +3,7 @@ package com.verygood.attendance.attendance;
 import lombok.Data;
 
 @Data
-public class AttendanceRequest {
+public class AllAttendance {
     private Integer memberId;
     private String firstname;
     private String lastname;
@@ -16,5 +16,4 @@ public class AttendanceRequest {
     private boolean yatangiyeIsabato;
     private boolean yize7;
     private boolean ararwaye;
-    private int abashyitsi;
 }
