@@ -25,12 +25,12 @@ public class AttendanceController {
 
     @PostMapping("/new")
     @PreAuthorize("hasAuthority('admin:create')")
-    public ResponseEntity<?> addAttendance(@RequestBody AttendanceRequest request){
+    public ResponseEntity<?> addAttendance(@RequestBody FamilyAttendanceRequest request){
         return service.addAttendance(request);
     }
 
     @PostMapping("/family")
-    public ResponseEntity<?> addAttendanceByFamily(@RequestBody AttendanceRequest request) {
+    public ResponseEntity<?> addAttendanceByFamily(@RequestBody FamilyAttendanceRequest request) {
         return service.addAttendanceByFamily(request);
     }
     

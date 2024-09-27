@@ -12,7 +12,6 @@ import com.verygood.attendance.family.FamilyRepository;
 import com.verygood.attendance.member.Member;
 import com.verygood.attendance.member.MemberRepository;
 
-import io.micrometer.core.ipc.http.HttpSender.Response;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -21,15 +20,14 @@ public class AttendanceService {
     private final AttendanceRepository repository;
     private final FamilyRepository familyRepository;
     private final MemberRepository memberRepository;
-    // private final ChurchWideAttendanceService churchWideAttendanceService;
 
+    private final ChurchWideAttendanceRepository churchWideAttendanceRepository;
     public ResponseEntity<?> getAttendances() {
         return ResponseEntity.ok(repository.findAll());
     }
 
-    public ResponseEntity<?> addAttendanceByFamily(AttendanceRequest request){
+    public ResponseEntity<?> addAttendanceByFamily(FamilyAttendanceRequest request) {
         LocalDate today = LocalDate.now();
-        
         int totalYajeCount = 0;
         int totalYarasuyeCount = 0;
         int totalYarasuweCount = 0;
@@ -39,7 +37,7 @@ public class AttendanceService {
         int totalYize7Count = 0;
         int totalArarwayeCount = 0;
         int totalAfiteIndiMpamvu = 0;
-        
+
         Integer familyId = request.getFamilyId();
 
         for (AllAttendance attendanceItem : request.getAllAttendance()) {
@@ -52,49 +50,32 @@ public class AttendanceService {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("All members must belong to the same family");
             }
 
-            if (attendanceItem.isYaje()) {
-                totalYajeCount++;
-            }
-            if (attendanceItem.isYarasuye()) {
-                totalYarasuyeCount++;
-            }
-            if (attendanceItem.isYarasuwe()) {
-                totalYarasuweCount++;
-            }
-            if (attendanceItem.isYarafashije()) {
-                totalYarafashijeCount++;
-            }
-            if (attendanceItem.isYarafashijwe()) {
-                totalYarafashijweCount++;
-            }
-            if (attendanceItem.isYatangiyeIsabato()) {
-                totalYatangiyeIsabatoCount++;
-            }
-            if (attendanceItem.isYize7()) {
-                totalYize7Count++;
-            }
-            if (attendanceItem.isArarwaye()) {
-                totalArarwayeCount++;
-            }
-            if (attendanceItem.isAfiteIndiMpamvu()) {
-                totalAfiteIndiMpamvu++;
-            }
+            // Increment counts based on attendance
+            if (attendanceItem.isYaje()) totalYajeCount++;
+            if (attendanceItem.isYarasuye()) totalYarasuyeCount++;
+            if (attendanceItem.isYarasuwe()) totalYarasuweCount++;
+            if (attendanceItem.isYarafashije()) totalYarafashijeCount++;
+            if (attendanceItem.isYarafashijwe()) totalYarafashijweCount++;
+            if (attendanceItem.isYatangiyeIsabato()) totalYatangiyeIsabatoCount++;
+            if (attendanceItem.isYize7()) totalYize7Count++;
+            if (attendanceItem.isArarwaye()) totalArarwayeCount++;
+            if (attendanceItem.isAfiteIndiMpamvu()) totalAfiteIndiMpamvu++;
         }
 
+        // Update family attendance
         Optional<Attendance> existingAttendance = repository.findByFamilyIdAndIssuedDate(familyId, today);
-
         Attendance attendance;
         if (existingAttendance.isPresent()) {
             attendance = existingAttendance.get();
             attendance.setTotalYajeCount(totalYajeCount);
             attendance.setTotalYarasuyeCount(totalYarasuyeCount);
             attendance.setTotalYarasuweCount(totalYarasuweCount);
-            attendance.setTotalYarafashijeCount( totalYarafashijeCount);
-            attendance.setGetTotalYarafashijweCount( totalYarafashijweCount);
-            attendance.setTotalYatangiyeIsabatoCount( totalYatangiyeIsabatoCount);
-            attendance.setTotalYize7Count( totalYize7Count);
+            attendance.setTotalYarafashijeCount(totalYarafashijeCount);
+            attendance.setGetTotalYarafashijweCount(totalYarafashijweCount);
+            attendance.setTotalYatangiyeIsabatoCount(totalYatangiyeIsabatoCount);
+            attendance.setTotalYize7Count(totalYize7Count);
             attendance.setTotalArarwayeCount(totalArarwayeCount);
-            attendance.setTotalAfiteIndiMpamvu( totalAfiteIndiMpamvu);
+            attendance.setTotalAfiteIndiMpamvu(totalAfiteIndiMpamvu);
             attendance.setAbashyitsi(request.getAbashyitsi());
         } else {
             attendance = Attendance.builder()
@@ -114,126 +95,40 @@ public class AttendanceService {
         }
 
         repository.save(attendance);
-
-        // churchWideAttendanceService.updateChurchWideTotals(
-        //     totalYajeCount,
-        //     totalYarasuyeCount,
-        //     totalYarasuweCount,
-        //     totalYarafashijeCount,
-        //     totalYarafashijweCount,
-        //     totalYatangiyeIsabatoCount,
-        //     totalYize7Count,
-        //     totalArarwayeCount,
-        //     totalAfiteIndiMpamvu
-        // );
-
-        return ResponseEntity.status(HttpStatus.CREATED).body("Attendance added successfully");
-    }
-
-
-
-
-
-    public ResponseEntity<?> addAttendance(AttendanceRequest request) {
-        LocalDate today = LocalDate.now();
         
-        // Initialize variables to accumulate the totals
-        int totalYajeCount = 0;
-        int totalYarasuyeCount = 0;
-        int totalYarasuweCount = 0;
-        int totalYarafashijeCount = 0;
-        int totalYarafashijweCount = 0;
-        int totalYatangiyeIsabatoCount = 0;
-        int totalYize7Count = 0;
-        int totalArarwayeCount = 0;
-        int totalAfiteIndiMpamvu = 0;
-        
-        Integer familyId = null;
-    
-        // Loop through the members in the attendance request and accumulate totals
-        for (AllAttendance attendanceItem : request.getAllAttendance()) {
-            Optional<Member> member = memberRepository.findById(attendanceItem.getMemberId());
-            if (!member.isPresent()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Member with ID " + attendanceItem.getMemberId() + " not found");
-            }
-    
-            if (!member.get().getFirstname().equals(attendanceItem.getFirstname()) || 
-                !member.get().getLastname().equals(attendanceItem.getLastname())) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Member with that ID and those names not found");
-            }
-    
-            // Set familyId based on the first member in the array (all members should be from the same family)
-            if (familyId == null) {
-                familyId = member.get().getFamily().getId();
-            }
-    
-            // Accumulate totals for each member
-            if (attendanceItem.isYaje()) {
-                totalYajeCount++;
-            }
-            if (attendanceItem.isYarasuye()) {
-                totalYarasuyeCount++;
-            }
-            if (attendanceItem.isYarasuwe()) {
-                totalYarasuweCount++;
-            }
-            if (attendanceItem.isYarafashije()) {
-                totalYarafashijeCount++;
-            }
-            if (attendanceItem.isYarafashijwe()) {
-                totalYarafashijweCount++;
-            }
-            if (attendanceItem.isYatangiyeIsabato()) {
-                totalYatangiyeIsabatoCount++;
-            }
-            if (attendanceItem.isYize7()) {
-                totalYize7Count++;
-            }
-            if (attendanceItem.isArarwaye()) {
-                totalArarwayeCount++;
-            }
-            if (attendanceItem.isAfiteIndiMpamvu()) {
-                totalAfiteIndiMpamvu++;
-            }
-        }
-    
-        // Now that all members have been processed, update or create the attendance record
-        Optional<Attendance> existingAttendance = repository.findByFamilyIdAndIssuedDate(familyId, today);
-    
-        Attendance attendance;
-        if (existingAttendance.isPresent()) {
-            attendance = existingAttendance.get();
-            attendance.setTotalYajeCount(totalYajeCount);
-            attendance.setTotalYarasuyeCount(totalYarasuyeCount);
-            attendance.setTotalYarasuweCount(totalYarasuweCount);
-            attendance.setTotalYarafashijeCount(totalYarafashijeCount);
-            attendance.setGetTotalYarafashijweCount(totalYarafashijweCount);
-            attendance.setTotalYatangiyeIsabatoCount(totalYatangiyeIsabatoCount);
-            attendance.setTotalYize7Count(totalYize7Count);
-            attendance.setTotalArarwayeCount(totalArarwayeCount);
-            attendance.setTotalAfiteIndiMpamvu(totalAfiteIndiMpamvu);
+
+        Optional<ChurchWideAttendance> churchAttendance = churchWideAttendanceRepository.findByDate(today);
+        if (churchAttendance.isPresent()) {
+            ChurchWideAttendance currentAttendance = churchAttendance.get();
+            currentAttendance.setTotalYajeCount(currentAttendance.getTotalYajeCount() + totalYajeCount);
+            currentAttendance.setTotalYarasuyeCount(currentAttendance.getTotalYarasuyeCount() + totalYarasuyeCount);
+            currentAttendance.setTotalYarasuweCount(currentAttendance.getTotalYarasuweCount() + totalYarasuweCount);
+            currentAttendance.setTotalYarafashijeCount(currentAttendance.getTotalYarafashijeCount() + totalYarafashijeCount);
+            currentAttendance.setTotalYarafashijweCount(currentAttendance.getTotalYarafashijweCount() + totalYarafashijweCount);
+            currentAttendance.setTotalYatangiyeIsabatoCount(currentAttendance.getTotalYatangiyeIsabatoCount() + totalYatangiyeIsabatoCount);
+            currentAttendance.setTotalYize7Count(currentAttendance.getTotalYize7Count() + totalYize7Count);
+            currentAttendance.setTotalArarwayeCount(currentAttendance.getTotalArarwayeCount() + totalArarwayeCount);
+            currentAttendance.setTotalAfiteIndiMpamvu(currentAttendance.getTotalAfiteIndiMpamvu() + totalAfiteIndiMpamvu);
+            churchWideAttendanceRepository.save(currentAttendance);
         } else {
-            attendance = Attendance.builder()
-                .familyId(familyId)
-                .issuedDate(today)
+            ChurchWideAttendance newAttendance = ChurchWideAttendance.builder()
+                .date(today)
                 .totalYajeCount(totalYajeCount)
                 .totalYarasuyeCount(totalYarasuyeCount)
                 .totalYarasuweCount(totalYarasuweCount)
                 .totalYarafashijeCount(totalYarafashijeCount)
-                .getTotalYarafashijweCount(totalYarafashijweCount)
+                .totalYarafashijweCount(totalYarafashijweCount)
                 .totalYatangiyeIsabatoCount(totalYatangiyeIsabatoCount)
                 .totalYize7Count(totalYize7Count)
                 .totalArarwayeCount(totalArarwayeCount)
                 .totalAfiteIndiMpamvu(totalAfiteIndiMpamvu)
                 .build();
+            churchWideAttendanceRepository.save(newAttendance);
         }
-    
-        repository.save(attendance);
-    
+
         return ResponseEntity.status(HttpStatus.CREATED).body("Attendance added successfully");
     }
 
-    
     public ResponseEntity<?> getAttendanceByFamilyId(Integer familyId) {
         Optional<Family> familyExists = familyRepository.findById(familyId);
         if (!familyExists.isPresent()) {
@@ -253,5 +148,9 @@ public class AttendanceService {
     public ResponseEntity<?> deleteAllAttendances(){
         repository.deleteAll();
         return ResponseEntity.ok("Attendances deleted successfully");
+    }
+
+    public ResponseEntity<?> addAttendance(FamilyAttendanceRequest request) {
+return ResponseEntity.ok("Unimplemeneted method");
     }
 }

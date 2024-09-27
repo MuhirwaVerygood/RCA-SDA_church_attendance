@@ -1,21 +1,26 @@
 package com.verygood.attendance.attendance;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import java.time.LocalDate;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
 @Builder
+@Table(name = "Report")
+@AllArgsConstructor
+@NoArgsConstructor
 public class ChurchWideAttendance {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    private LocalDate issuedDate;
+    private LocalDate date;
     private int totalYajeCount;
     private int totalYarasuyeCount;
     private int totalYarasuweCount;
@@ -25,6 +30,4 @@ public class ChurchWideAttendance {
     private int totalYize7Count;
     private int totalArarwayeCount;
     private int totalAfiteIndiMpamvu;
-    private int totalAbashytsi;
-
 }

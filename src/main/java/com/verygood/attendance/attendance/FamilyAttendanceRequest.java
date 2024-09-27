@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class AttendanceRequest {
+public class FamilyAttendanceRequest {
  private List<AllAttendance> allAttendance;
  private int abashyitsi;
  private int familyId;

@@ -5,8 +5,8 @@ import java.time.LocalDate;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ChurchWideAttendanceRepository  extends JpaRepository<ChurchWideAttendance, Integer> {
+public interface ChurchWideAttendanceRepository  extends JpaRepository<ChurchWideAttendance, LocalDate> {
 
-    Optional<ChurchWideAttendance> findByIssuedDate(LocalDate today);
+    Optional<ChurchWideAttendance> findByDate(LocalDate date);
 
 }
