@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 public class MemberService {
     private final MemberRepository repository;
     private final FamilyRepository familyRepository;
+    private final MemberRepository memberRepository;
     public ResponseEntity<?> getMembers() {
         List<Member> members = repository.findAll();
         List<MemberDto> memberDtos = members.stream().map(MemberDto::new).collect(Collectors.toList());
@@ -65,4 +66,10 @@ public class MemberService {
          repository.deleteById(memberId);
          return ResponseEntity.ok().body("Member deleted successfully");
         }
+
+    public ResponseEntity<?> getMembersByFamilyId(Integer familyId) {
+        List<Member> members = memberRepository.findByFamilyId(familyId);
+        List<MemberDto> memberDtos = members.stream().map(MemberDto::new).collect(Collectors.toList());
+        return ResponseEntity.ok(memberDtos);
+    }
 }

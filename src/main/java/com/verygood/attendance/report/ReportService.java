@@ -18,4 +18,9 @@ public class ReportService {
     public ResponseEntity<List<ChurchWideAttendance>> getALlAttendance() {
         return ResponseEntity.ok().body(repository.findAll());
     }
+
+    public ResponseEntity<?> deleteAllReports(){
+        repository.deleteAll();
+        return ResponseEntity.ok("Reports deleted successfully");
+    }
 }

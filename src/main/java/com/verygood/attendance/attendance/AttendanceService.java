@@ -20,6 +20,7 @@ public class AttendanceService {
     private final AttendanceRepository repository;
     private final FamilyRepository familyRepository;
     private final MemberRepository memberRepository;
+    
 
     private final ChurchWideAttendanceRepository churchWideAttendanceRepository;
     public ResponseEntity<?> getAttendances() {
@@ -37,19 +38,19 @@ public class AttendanceService {
         int totalYize7Count = 0;
         int totalArarwayeCount = 0;
         int totalAfiteIndiMpamvu = 0;
-
+    
         Integer familyId = request.getFamilyId();
-
+    
         for (AllAttendance attendanceItem : request.getAllAttendance()) {
             Optional<Member> member = memberRepository.findById(attendanceItem.getMemberId());
             if (!member.isPresent()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Member with ID " + attendanceItem.getMemberId() + " not found");
             }
-
+    
             if (!member.get().getFamily().getId().equals(familyId)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("All members must belong to the same family");
             }
-
+    
             // Increment counts based on attendance
             if (attendanceItem.isYaje()) totalYajeCount++;
             if (attendanceItem.isYarasuye()) totalYarasuyeCount++;
@@ -61,7 +62,7 @@ public class AttendanceService {
             if (attendanceItem.isArarwaye()) totalArarwayeCount++;
             if (attendanceItem.isAfiteIndiMpamvu()) totalAfiteIndiMpamvu++;
         }
-
+    
         // Update family attendance
         Optional<Attendance> existingAttendance = repository.findByFamilyIdAndIssuedDate(familyId, today);
         Attendance attendance;
@@ -93,26 +94,61 @@ public class AttendanceService {
                 .abashyitsi(request.getAbashyitsi())
                 .build();
         }
-
+    
         repository.save(attendance);
-        
-
-        Optional<ChurchWideAttendance> churchAttendance = churchWideAttendanceRepository.findByDate(today);
-        if (churchAttendance.isPresent()) {
-            ChurchWideAttendance currentAttendance = churchAttendance.get();
-            currentAttendance.setTotalYajeCount(currentAttendance.getTotalYajeCount() + totalYajeCount);
-            currentAttendance.setTotalYarasuyeCount(currentAttendance.getTotalYarasuyeCount() + totalYarasuyeCount);
-            currentAttendance.setTotalYarasuweCount(currentAttendance.getTotalYarasuweCount() + totalYarasuweCount);
-            currentAttendance.setTotalYarafashijeCount(currentAttendance.getTotalYarafashijeCount() + totalYarafashijeCount);
-            currentAttendance.setTotalYarafashijweCount(currentAttendance.getTotalYarafashijweCount() + totalYarafashijweCount);
-            currentAttendance.setTotalYatangiyeIsabatoCount(currentAttendance.getTotalYatangiyeIsabatoCount() + totalYatangiyeIsabatoCount);
-            currentAttendance.setTotalYize7Count(currentAttendance.getTotalYize7Count() + totalYize7Count);
-            currentAttendance.setTotalArarwayeCount(currentAttendance.getTotalArarwayeCount() + totalArarwayeCount);
-            currentAttendance.setTotalAfiteIndiMpamvu(currentAttendance.getTotalAfiteIndiMpamvu() + totalAfiteIndiMpamvu);
-            churchWideAttendanceRepository.save(currentAttendance);
+    
+        // Aggregate attendance by date
+        aggregateAttendanceByDate(today);
+    
+        return ResponseEntity.status(HttpStatus.CREATED).body("Attendance added successfully");
+    }
+    
+ 
+    private void aggregateAttendanceByDate(LocalDate date) {
+        List<Attendance> attendancesByDate = repository.findByIssuedDate(date);
+    
+        int totalYajeCount = 0;
+        int totalYarasuyeCount = 0;
+        int totalYarasuweCount = 0;
+        int totalYarafashijeCount = 0;
+        int totalYarafashijweCount = 0;
+        int totalYatangiyeIsabatoCount = 0;
+        int totalYize7Count = 0;
+        int totalArarwayeCount = 0;
+        int totalAfiteIndiMpamvu = 0;
+        int totalAbashyitsiCount = 0;
+    
+        for (Attendance attendance : attendancesByDate) {
+            totalYajeCount += attendance.getTotalYajeCount();
+            totalYarasuyeCount += attendance.getTotalYarasuyeCount();
+            totalYarasuweCount += attendance.getTotalYarasuweCount();
+            totalYarafashijeCount += attendance.getTotalYarafashijeCount();
+            totalYarafashijweCount += attendance.getGetTotalYarafashijweCount();
+            totalYatangiyeIsabatoCount += attendance.getTotalYatangiyeIsabatoCount();
+            totalYize7Count += attendance.getTotalYize7Count();
+            totalArarwayeCount += attendance.getTotalArarwayeCount();
+            totalAfiteIndiMpamvu += attendance.getTotalAfiteIndiMpamvu();
+            totalAbashyitsiCount += attendance.getAbashyitsi();
+        }
+    
+        // Check if a record already exists for the given date
+        Optional<ChurchWideAttendance> existingChurchAttendance = churchWideAttendanceRepository.findByDate(date);
+        if (existingChurchAttendance.isPresent()) {
+            ChurchWideAttendance churchAttendance = existingChurchAttendance.get();
+            churchAttendance.setTotalYajeCount(totalYajeCount);
+            churchAttendance.setTotalYarasuyeCount(totalYarasuyeCount);
+            churchAttendance.setTotalYarasuweCount(totalYarasuweCount);
+            churchAttendance.setTotalYarafashijeCount(totalYarafashijeCount);
+            churchAttendance.setTotalYarafashijweCount(totalYarafashijweCount);
+            churchAttendance.setTotalYatangiyeIsabatoCount(totalYatangiyeIsabatoCount);
+            churchAttendance.setTotalYize7Count(totalYize7Count);
+            churchAttendance.setTotalArarwayeCount(totalArarwayeCount);
+            churchAttendance.setTotalAfiteIndiMpamvu(totalAfiteIndiMpamvu);
+            churchAttendance.setTotalAbashyitsiCount(totalAbashyitsiCount);
+            churchWideAttendanceRepository.save(churchAttendance);
         } else {
             ChurchWideAttendance newAttendance = ChurchWideAttendance.builder()
-                .date(today)
+                .date(date)
                 .totalYajeCount(totalYajeCount)
                 .totalYarasuyeCount(totalYarasuyeCount)
                 .totalYarasuweCount(totalYarasuweCount)
@@ -122,12 +158,12 @@ public class AttendanceService {
                 .totalYize7Count(totalYize7Count)
                 .totalArarwayeCount(totalArarwayeCount)
                 .totalAfiteIndiMpamvu(totalAfiteIndiMpamvu)
+                .totalAbashyitsiCount(totalAbashyitsiCount)
                 .build();
             churchWideAttendanceRepository.save(newAttendance);
         }
-
-        return ResponseEntity.status(HttpStatus.CREATED).body("Attendance added successfully");
     }
+    
 
     public ResponseEntity<?> getAttendanceByFamilyId(Integer familyId) {
         Optional<Family> familyExists = familyRepository.findById(familyId);

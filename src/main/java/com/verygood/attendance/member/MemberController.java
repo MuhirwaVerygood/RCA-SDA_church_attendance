@@ -5,6 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping(path = "/api/v1/members")
@@ -22,6 +25,12 @@ import org.springframework.web.bind.annotation.*;
     public ResponseEntity<?>  addMember(@RequestBody MemberRequest  request){
         return service.addMember(request);
     }
+
+    @GetMapping("/{family-id}")
+    public ResponseEntity<?> getMembersByFamilyId(@PathVariable("family-id") Integer familyId) {
+        return service.getMembersByFamilyId(familyId);
+    }
+    
 
     @PreAuthorize("hasAuthority('admin:delete')")   
     @DeleteMapping("/{member-id}")
