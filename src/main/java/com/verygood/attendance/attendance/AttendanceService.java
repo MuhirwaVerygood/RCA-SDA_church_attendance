@@ -51,7 +51,6 @@ public class AttendanceService {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("All members must belong to the same family");
             }
     
-            // Increment counts based on attendance
             if (attendanceItem.isYaje()) totalYajeCount++;
             if (attendanceItem.isYarasuye()) totalYarasuyeCount++;
             if (attendanceItem.isYarasuwe()) totalYarasuweCount++;
@@ -63,7 +62,6 @@ public class AttendanceService {
             if (attendanceItem.isAfiteIndiMpamvu()) totalAfiteIndiMpamvu++;
         }
     
-        // Update family attendance
         Optional<Attendance> existingAttendance = repository.findByFamilyIdAndIssuedDate(familyId, today);
         Attendance attendance;
         if (existingAttendance.isPresent()) {
@@ -131,7 +129,6 @@ public class AttendanceService {
             totalAbashyitsiCount += attendance.getAbashyitsi();
         }
     
-        // Check if a record already exists for the given date
         Optional<ChurchWideAttendance> existingChurchAttendance = churchWideAttendanceRepository.findByDate(date);
         if (existingChurchAttendance.isPresent()) {
             ChurchWideAttendance churchAttendance = existingChurchAttendance.get();
@@ -188,5 +185,50 @@ public class AttendanceService {
 
     public ResponseEntity<?> addAttendance(FamilyAttendanceRequest request) {
 return ResponseEntity.ok("Unimplemeneted method");
+    }
+
+    public ResponseEntity<?> addFamilyAttendanceByForm(AttendanceFormRequest request) {
+        LocalDate date = LocalDate.now();
+        Integer familyId = request.getFamilyId();
+        Optional<Family> familyExists = familyRepository.findById(familyId);
+        if(!familyExists.isPresent()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("The family with that id not found");
+        }
+        Optional<Attendance> existingAttendance = repository.findByFamilyIdAndIssuedDate(familyId, date);
+        Attendance attendance;
+        if (existingAttendance.isPresent()) {
+            attendance = existingAttendance.get();
+            attendance.setTotalYajeCount(request.getFamilyAttendance().getYajeCount());
+            attendance.setTotalYarasuyeCount(request.getFamilyAttendance().getYarasuyeCount());
+            attendance.setTotalYarasuweCount(request.getFamilyAttendance().getYarasuweCount());
+            attendance.setTotalYarafashijeCount(request.getFamilyAttendance().getYarafashijeCOunt());
+            attendance.setGetTotalYarafashijweCount(request.getFamilyAttendance().getYarafashijweCount());
+            attendance.setTotalYatangiyeIsabatoCount(request.getFamilyAttendance().getYatangiyeIsabatoCount());
+            attendance.setTotalYize7Count(request.getFamilyAttendance().getYize7Count());
+            attendance.setTotalArarwayeCount(request.getFamilyAttendance().getArarwayeCount());
+            attendance.setTotalAfiteIndiMpamvu(request.getFamilyAttendance().getAfiteIndiMpamvuCount());
+            attendance.setAbashyitsi(request.getAbashyitsiCount());
+        } else {
+            attendance = Attendance.builder()
+                .familyId(familyId)
+                .issuedDate(date)
+                .totalYajeCount(request.getFamilyAttendance().getYajeCount())
+                .totalYarasuyeCount(request.getFamilyAttendance().getYarasuyeCount())
+                .totalYarasuweCount(request.getFamilyAttendance().getYarasuweCount())
+                .totalYarafashijeCount(request.getFamilyAttendance().getYarafashijeCOunt())
+                .getTotalYarafashijweCount(request.getFamilyAttendance().getYarafashijweCount())
+                .totalYatangiyeIsabatoCount(request.getFamilyAttendance().getYatangiyeIsabatoCount())
+                .totalYize7Count(request.getFamilyAttendance().getYize7Count())
+                .totalArarwayeCount(request.getFamilyAttendance().getArarwayeCount())
+                .totalAfiteIndiMpamvu(request.getFamilyAttendance().getAfiteIndiMpamvuCount())
+                .abashyitsi(request.getAbashyitsiCount())
+                .build();
+        }
+    
+        repository.save(attendance);
+    
+        aggregateAttendanceByDate(date);
+    
+        return ResponseEntity.status(HttpStatus.CREATED).body("Attendance added successfully");        
     }
 }

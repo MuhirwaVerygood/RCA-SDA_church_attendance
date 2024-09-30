@@ -18,6 +18,7 @@ spring:
       ddl-auto: update
 server:
   port: 3500
+  
 
 application:
   security:
