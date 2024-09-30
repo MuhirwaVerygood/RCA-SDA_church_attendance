@@ -2,11 +2,12 @@ import { useState } from "react";
 import { Dispatch, ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { AttendanceRequest, AttendanceState, updateAttendanceSync } from "@/app/lib/AttendanceSlice";
 import { Checkbox } from "@chakra-ui/react";
+import { FamilyAttendanceState, updateFamilyAttendanceSync } from "@/app/lib/FamilyAttendanceSlice";
 
 const FamilyAttendanceRow= ({ user, dispatch, id }: {
   user: AttendanceRequest, 
   id: number, 
-  dispatch: ThunkDispatch<{ attendance: AttendanceState }, undefined, UnknownAction> & Dispatch<UnknownAction>
+  dispatch: ThunkDispatch<{ attendance: FamilyAttendanceState }, undefined, UnknownAction> & Dispatch<UnknownAction>
 }) => {
    
   const username = `${user.firstname} ${user.lastname}`;  
@@ -29,7 +30,7 @@ const FamilyAttendanceRow= ({ user, dispatch, id }: {
   const handleUpdate = (key: keyof typeof attendanceData, value: boolean) => {
     setAttendanceData(prevData => {
       const updatedData = { ...prevData, [key]: value };
-      dispatch(updateAttendanceSync(updatedData));
+      dispatch(updateFamilyAttendanceSync(updatedData));
       return updatedData; 
     });
   };

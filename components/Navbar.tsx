@@ -43,9 +43,9 @@ const Navbar = () => {
   ];
 
   const familyOptions = [
-    { name: "Ebenezar", href: "/attendances/family/ebenezer" },
-    { name: "Salvation Siblings", href: "/attendances/family/salvation_siblings" },
-    { name: "Family Exaucee", href: "/attendances/family/exaucee" },
+    { name: "Ebenezar", href: "/attendances/family/1" },
+    { name: "Salvation Siblings", href: "/attendances/family/2" },
+    { name: "Family Exaucee", href: "/attendances/family/3" },
   ];
 
   const router = useRouter();
@@ -56,10 +56,9 @@ const Navbar = () => {
   };
 
   return (
-    <>
       <nav className='h-[80px]'>
         <div  className='bg-pink-300 h-full flex items-center justify-end gap-[3%] pr-[5%] text-white'>
-          {navigationLinks.map((li, index) => (
+          {navigationLinks.map((li, index) => 
             <div 
               className="relative" 
               key={index}
@@ -112,11 +111,9 @@ const Navbar = () => {
                 </div>
               )}
             </div>
-          ))}
+          )}
         </div>
       </nav>
-
-    </>
   );
 };
 

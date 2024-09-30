@@ -11,19 +11,20 @@ import {
 } from "@/app/lib/AttendanceSlice";
 import Cookies from "js-cookie";
 import FamilyAttendanceRow from './FamilyAttendanceRow';
+import { MemberType } from './Homepage';
+import { addFamilyAttendanceSync, updateFamilyAttendance, updateFamilyAttendanceSync } from '@/app/lib/FamilyAttendanceSlice';
+import { RootState } from '@/app/lib/store';
 
 const FamilyAttendance = ({id}:{id: number}) => {
     const [abashyitsi, setAbashyitsi] = useState(0);
     const token = Cookies.get("token");
     const dispatch = useAppDispatch();
-    const router = useRouter();
     const [loading, setLoading] = useState(true);
-    const [userDatas, setUserDatas] = useState<AttendanceRequest>()
+    const [userDatas, setUserDatas] = useState<MemberType[]>([])
     const toast = useToast();
-    const allAttendance: AttendanceRequest[] = useAppSelector(
-      (state) => state.attendance.attendances
-    );
+    const router =useRouter();
 
+    const allAttendance : AttendanceRequest[] = useAppSelector((state: RootState)=> state.familyAttendance.attendances)
 
     const fetchData = async () => {
         console.log(allAttendance);
@@ -32,15 +33,17 @@ const FamilyAttendance = ({id}:{id: number}) => {
           setLoading(true);
           console.log("Bearer before", token);
     
-          const response = await axios.get("http://localhost:3500/api/v1/members/"+ Number(id),  {
+          const response = await axios.get(`http://localhost:3500/api/v1/members/+${Number(id)}`  ,{
             headers: {
               Authorization: `Bearer ${token}`,
             },
           });
     
-          setUserDatas(response.data);
-        console.log(userDatas)
+          console.log(response.data);
           
+          setUserDatas(response.data);
+          
+       
     
         } catch (error: any) {
           if (axios.isAxiosError(error)) {
@@ -58,36 +61,14 @@ const FamilyAttendance = ({id}:{id: number}) => {
       }, []);
     
 
-
   
-    const handleSubmit = async () => {
-      console.log(allAttendance);
       
-      const formdata = {
-        allAttendance,
-        abashyitsi,
-      };
   
-     try {
-      const res = await axios.post(
-          "https://attendance-pro.onrender.com/api/v1/attendance/addAttendance",
-          formdata,
-          {
-            headers: {
-              authorization: `Bearer ${token}`,
-            },
-          }
-        );
-    
-        if (res.status == 200) {
-          toast({
-            title: "Attendance added successfully",
-            position: "top-right",
-            duration: 2000,
-            status: "success",
-          });
-    
-          const newAttendance: AttendanceRequest[] = allAttendance.map((data) => ({
+
+
+      useEffect(() => {
+        if (userDatas.length > 0) {
+          const attendanceRequests: AttendanceRequest[] = userDatas.map((data: MemberType) => ({
             memberId: data.memberId,
             firstname: data.firstname,
             lastname: data.lastname,
@@ -99,28 +80,72 @@ const FamilyAttendance = ({id}:{id: number}) => {
             yatangiyeIsabato: false,
             yize7: false,
             ararwaye: false,
-            afiteIndiMpamvu:false
+            afiteIndiMpamvu: false
           }));
-    
-          newAttendance.forEach((d) => {
-            dispatch(updateAttendanceSync(d));
+      
+          attendanceRequests.forEach(attendance => dispatch(addFamilyAttendanceSync(attendance)));
+        }
+      }, [userDatas, dispatch]);  
+      
+
+
+      const handleSubmit = async (e: React.FormEvent) => { 
+        e.preventDefault();
+        const formdata = {
+          allAttendance,
+          abashyitsi,
+          familyId: Number(id)
+        };
+      
+        console.log(formdata);
+        
+        try {
+          const res = await axios.post(
+            `http://localhost:3500/attendance/family`,
+            formdata,
+            {
+              headers: {
+                authorization: `Bearer ${token}`,
+              },
+            }
+          );
+        
+          if(res.status == 200){
+            toast({
+              title:"Attendance added successfully",
+              duration: 2000,
+              position: 'top-right' ,
+              status: "success"
+                       })
+          }
+      
+        } catch (error: any) {
+          const errorMessage = axios.isAxiosError(error) && error.response?.data?.message
+            ? error.response.data.message
+            : error.message || "An error occurred";
+      
+          toast({
+            title: errorMessage,
+            position: "top-right",
+            duration: 2000,
+            status: "error"
           });
         }
-     } catch (error) {
-      toast({
-          title:"Failed to add attendance",
-          position:"top-right",
-          duration:2000,
-          status: "error"
-      })
-     }
-    };
+      };
+      
+
+
+      const handleRedirect = ()=>{
+        router.push(`/attendances/family/form/${id}`)
+      }
+
+
   
     return (
       <>
       {allAttendance &&   <div className="pt-[2%] flex flex-col items-center">
           {/* <Navbar /> */}
-          <form action="" className="w-[90%] ">
+          <form action="" className="w-[90%] " onSubmit={handleSubmit}>
             <table className="w-full">
               <thead>
                 <tr>
@@ -160,12 +185,12 @@ const FamilyAttendance = ({id}:{id: number}) => {
                 </tr>
               </thead>
               <tbody>
-                {allAttendance.map((user) => {
+                {allAttendance.map((user, index) => {
                   return (
                     <FamilyAttendanceRow
                     key={user.memberId}
                       user={user}
-                      id={user.memberId}
+                      id={index + 1}
                       dispatch={dispatch}
                     />
                   );
@@ -184,13 +209,13 @@ const FamilyAttendance = ({id}:{id: number}) => {
                 type="submit"
                 variant={"solid"}
                 mt={"2%"}
-                colorScheme="teal"
-                onClick={handleSubmit}
-              >
+                colorScheme="teal"              >
                 Submit
               </Button>
             </div>
           </form>
+
+          <Button onClick={handleRedirect}>Use a form </Button>
         </div>}
       </>
     );  

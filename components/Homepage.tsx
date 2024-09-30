@@ -24,7 +24,6 @@ const Homepage = () => {
   const dispatch = useAppDispatch();
   const attendancies = useAppSelector((state: RootState)=>state.attendance.attendances)
   const fetchData = async () => {
-    console.log(attendancies);
     
     try {
       setLoading(true);
@@ -36,9 +35,7 @@ const Homepage = () => {
         },
       });
 
-      setUserDatas(response.data);
-    console.log(userDatas)
-      
+      setUserDatas(response.data);      
 
     } catch (error: any) {
       if (axios.isAxiosError(error)) {
@@ -58,6 +55,9 @@ const Homepage = () => {
   useEffect(()=>{
     console.log(attendancies);    
   },[])
+
+  console.log(userDatas);
+  
   
   const attendanceRequests: AttendanceRequest[] = userDatas.map((data: MemberType) => ({
     memberId: data.memberId,
