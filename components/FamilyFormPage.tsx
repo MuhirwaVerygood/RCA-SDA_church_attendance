@@ -1,7 +1,8 @@
-import { AttendanceRequest } from "@/app/lib/AttendanceSlice";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Button, FormControl, FormLabel, Input, VStack } from "@chakra-ui/react";
+import axios from "axios";
+import Cookies from "js-cookie"
 
 interface FamilyAttendanceForm {
     yajeCount: number;
@@ -16,8 +17,7 @@ interface FamilyAttendanceForm {
 }
 
 const FamilyFormPage = ({id}:{id: number}) => {
-    const router = useRouter();
-
+    const [token ,setToken ] = useState<string | undefined>();
     const [familyAttendance, setFamilyAttendance] = useState<FamilyAttendanceForm>({
         yajeCount: 0,
         yarasuyeCount: 0,
@@ -30,24 +30,45 @@ const FamilyFormPage = ({id}:{id: number}) => {
         afiteIndiMpamvuCount: 0,
     });
 
+    const [abashyitsiCount, setAbashyitsiCount] = useState<string>("");
+
+
+    useEffect(()=>{
+        setToken(Cookies.get("token"));
+    },[])
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFamilyAttendance((prevState) => ({
             ...prevState,
-            [name]: Number(value), // Convert string input to number
+            [name]: Number(value), 
         }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async(e: React.FormEvent) => {
         e.preventDefault();
-        // Handle the form submission logic here
-        console.log(familyAttendance);
+        const formData = {
+            familyAttendance, 
+            abashyitsiCount,
+            familyId: id
+        }
+
+        try {
+            const response = await axios.post("http://localhost:3500/api/v1/attendances/family-attendance-form", formData,{
+                headers:{
+                    Authorization:`Bearer ${token}`
+                }
+            }) 
+        } catch (error) {
+           console.log(error);
+        }
     };
 
+
     return (
-        <Box p={4}>
-            <form onSubmit={handleSubmit}>
-                <VStack spacing={4} align="stretch">
+        <Box p={4} className="w-full min-h-[100vh]  flex justify-center">
+            <form onSubmit={handleSubmit} className=" flex flex-col  items-center w-[20%]">
+                <VStack spacing={4} align="stretch" className="w-full">
                     <FormControl>
                         <FormLabel htmlFor="yajeCount">Yaje Count</FormLabel>
                         <Input
@@ -144,6 +165,17 @@ const FamilyFormPage = ({id}:{id: number}) => {
                             type="number"
                             value={familyAttendance.afiteIndiMpamvuCount}
                             onChange={handleChange}
+                        />
+                    </FormControl>
+
+                    <FormControl>
+                        <FormLabel htmlFor="afiteIndiMpamvuCount">Abashyitsi Count</FormLabel>
+                        <Input
+                            id="abashyitsiCount"
+                            name="abashyitsiCount"
+                            type="number"
+                            value={abashyitsiCount}
+                            onChange={(e)=>setAbashyitsiCount(e.target.value)}
                         />
                     </FormControl>
 

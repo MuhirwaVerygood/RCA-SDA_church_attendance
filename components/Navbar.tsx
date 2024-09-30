@@ -25,7 +25,7 @@ const Navbar = () => {
       href: "/attendances",
       subOptions: [
         { name: "By Family Name", href: "/attendances/family" },
-        { name: "By Whole Church", href: "/attendances/church" }
+        { name: "By Whole Church", href: "/attendances" }
       ]
     },
     {
@@ -81,9 +81,9 @@ const Navbar = () => {
                 {li.name}
               </Link>
 
-              {li.subOptions && isDropdownOpen && (
+              {li.subOptions && isDropdownOpen && 
                 <div onMouseEnter={()=>setFamilyDropDownOpened(true)} onMouseLeave={()=>setFamilyDropDownOpened(false)} className="absolute top-full left-0 w-48 bg-white text-black shadow-lg rounded">
-                  {li.subOptions.map((subOption, subIndex) => (
+                  {li.subOptions.map((subOption, subIndex) => 
                     <div 
                       key={subIndex} 
                       onMouseEnter={() => subOption.name === "By Family Name" && setIsFamilyDropdownOpen(true)}
@@ -95,7 +95,7 @@ const Navbar = () => {
                         </div>
                       </Link>
 
-                      {subOption.name === "By Family Name" && isFamilyDropdownOpen && (
+                      {subOption.name === "By Family Name" && isFamilyDropdownOpen && 
                         <div onMouseEnter={()=>setFamilyDropDownOpened(true)}  className="absolute left-full top-0 mt-2 w-48 bg-white text-black shadow-lg rounded">
                           {familyOptions.map((family, familyIndex) => (
                             <Link key={familyIndex} href={family.href} passHref>
@@ -105,11 +105,11 @@ const Navbar = () => {
                             </Link>
                           ))}
                         </div>
-                      )}
+                      }
                     </div>
-                  ))}
+                  )}
                 </div>
-              )}
+              }
             </div>
           )}
         </div>
