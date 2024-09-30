@@ -15,3 +15,4 @@ public class FamilyRequest {
     private String name;
     private List<Member> members;
 }
+

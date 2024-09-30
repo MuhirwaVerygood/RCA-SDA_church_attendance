@@ -43,4 +43,10 @@ public class AttendanceController {
     public ResponseEntity<?> deleteAllAttendances(){
         return service.deleteAllAttendances();
     }
+
+    @PostMapping("/family-attendance-form")
+    public ResponseEntity<?> addAttendanceByForm(@RequestBody AttendanceFormRequest request) {
+       return service.addFamilyAttendanceByForm(request);
+    }
+    
  }
