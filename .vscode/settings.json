@@ -1,5 +1,5 @@
 {
-    "prisma-smart-formatter.typescriptreact.defaultFormatter": "esbenp.prettier-vscode",
     "editor.fontFamily": "\"Monospace 821 Roman\", Consolas, 'Courier New', monospace",
-    "editor.fontSize": 20
+    "editor.fontSize": 14,
+    "workbench.tree.indent": 10
 }

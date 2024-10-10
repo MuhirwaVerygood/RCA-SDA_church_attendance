@@ -22,7 +22,7 @@ const Navbar = () => {
     },
     {
       name: "Attendances",
-      href: "/attendances",
+      href: "#",
       subOptions: [
         { name: "By Family Name", href: "/attendances/family" },
         { name: "By Whole Church", href: "/attendances" }

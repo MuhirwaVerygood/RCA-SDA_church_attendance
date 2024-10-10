@@ -1,8 +1,9 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Box, Button, FormControl, FormLabel, Input, VStack } from "@chakra-ui/react";
+import { Box, Button, FormControl, FormLabel, Input, position, useToast, VStack } from "@chakra-ui/react";
 import axios from "axios";
 import Cookies from "js-cookie"
+import { title } from "process";
 
 interface FamilyAttendanceForm {
     yajeCount: number;
@@ -32,7 +33,7 @@ const FamilyFormPage = ({id}:{id: number}) => {
 
     const [abashyitsiCount, setAbashyitsiCount] = useState<string>("");
 
-
+    const toast = useToast()
     useEffect(()=>{
         setToken(Cookies.get("token"));
     },[])
@@ -59,6 +60,13 @@ const FamilyFormPage = ({id}:{id: number}) => {
                     Authorization:`Bearer ${token}`
                 }
             }) 
+
+            if(response.status ==200){
+                toast({
+                    title: response.data
+                })
+            }
+            console.log(response);
         } catch (error) {
            console.log(error);
         }
