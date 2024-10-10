@@ -82,7 +82,6 @@ const Attendance = () => {
   return (
     <>
     {allAttendance &&   <div className="pt-[2%] flex flex-col items-center">
-        {/* <Navbar /> */}
         <form action="" className="w-[90%] ">
           <table className="w-full">
             <thead>

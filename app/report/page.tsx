@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import Cookies from 'js-cookie';
 export interface AttendanceSummary {
     date: string; 
+    familyId?: number,
     totalAbashyitsiCount: number;
     totalAfiteIndiMpamvu: number;
     totalArarwayeCount: number;
@@ -17,9 +18,11 @@ export interface AttendanceSummary {
     totalYize7Count: number;
   }
   
+  
 
 const page = () => {
     const [churchAttendance, setChurchAttendance] = useState<AttendanceSummary[]>([])
+    const [churchTotalMembers, setChurchTotalMembers] = useState<number>()
     const fetchGeneralAttendance = async()=>{
         try {
             const response =  await axios.get("http://localhost:3500/api/v1/report",
@@ -30,7 +33,8 @@ const page = () => {
                 }
             )
           if(response.status == 200){
-            setChurchAttendance(response.data)                        
+            setChurchAttendance(response.data.churchAttendance)
+
           }
         } catch (error:any) {
             console.log(error.data.message);
@@ -47,7 +51,7 @@ const page = () => {
     
   return (
     <div>
-        <OrderedReport churchAttendance={churchAttendance} />
+        <OrderedReport churchAttendance={churchAttendance} churchTotalMembers={churchTotalMembers} setChurchTotalMembers={setChurchTotalMembers} />
     </div>
   )
 }
