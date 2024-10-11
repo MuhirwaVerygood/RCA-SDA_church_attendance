@@ -5,7 +5,6 @@ import React from 'react'
 
 const Page = () => {
   const {id}: {id: any} = useParams();
-  console.log("id ", id)
   return (
     <div>
         <FamilyAttendance id={id}/>

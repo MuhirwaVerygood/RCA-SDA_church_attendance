@@ -13,7 +13,7 @@ import {
 import Cookies from "js-cookie";
 import AttendanceRow from "./AttendanceRow";
 const Attendance = () => {
-  const [abashyitsi, setAbashyitsi] = useState(0);
+  const [abashyitsi, setAbashyitsi] = useState<number |  string>(0);
   const token = Cookies.get("token");
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -33,7 +33,7 @@ const Attendance = () => {
 
    try {
     const res = await axios.post(
-        "https://attendance-pro.onrender.com/api/v1/attendance/addAttendance",
+        "http://localhost:3500/api/v1/attendances/new",
         formdata,
         {
           headers: {
@@ -45,7 +45,7 @@ const Attendance = () => {
       if (res.status == 200) {
         toast({
           title: "Attendance added successfully",
-          position: "top-right",
+          position: "top",
           duration: 2000,
           status: "success",
         });
@@ -69,7 +69,9 @@ const Attendance = () => {
           dispatch(updateAttendanceSync(d));
         });
       }
-   } catch (error) {
+
+      router.push("/")
+    } catch (error) {  
     toast({
         title:"Failed to add attendance",
         position:"top-right",
@@ -138,6 +140,7 @@ const Attendance = () => {
             <Input
               htmlSize={4}
               width="auto"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setAbashyitsi(e.target.value)}
               defaultValue={0}
               mt={"2%"}
               placeholder="Abashyitsi"

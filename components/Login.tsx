@@ -41,7 +41,7 @@ const Login = () => {
           description: "Logged in successfully",
           status: "success",
           duration: 2000,
-          position: "top-right",
+          position: "top",
         });
         Cookies.set("token", response.data.body.access_token)
         Cookies.set("role", response.data.body.role)
@@ -75,7 +75,7 @@ const Login = () => {
               description: "Failed to register user",
               status: "error",
               duration: 2000,
-              position: "top-right",
+              position: "top",
             });
             setLoading(false);
         }

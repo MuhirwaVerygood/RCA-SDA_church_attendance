@@ -16,6 +16,7 @@ export interface AttendanceSummary {
     totalYarasuyeCount: number;
     totalYatangiyeIsabatoCount: number;
     totalYize7Count: number;
+    issuedDate?: string 
   }
   
   
@@ -34,6 +35,7 @@ const page = () => {
             )
           if(response.status == 200){
             setChurchAttendance(response.data.churchAttendance)
+            setChurchTotalMembers(response.data.totalMembers)
 
           }
         } catch (error:any) {
@@ -46,7 +48,7 @@ const page = () => {
         fetchGeneralAttendance();      
     },[])
 
-    console.log(churchAttendance);
+    
     
     
   return (
